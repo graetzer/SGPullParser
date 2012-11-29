@@ -161,9 +161,6 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding);
 // Parses an attribute value into one or more Text, EntityReference, and EndEntity nodes.
 - (BOOL)readAttributeValue;
 
-// Reads the contents of a text-only element.
-- (NSString *)readElementString;
-
 // Reads the contents of the current node, including child nodes and markup.
 - (NSString *)readInnerXML;
 

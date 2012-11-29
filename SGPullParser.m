@@ -171,23 +171,38 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
 }
 
 - (NSString *)attributeAtIndex:(NSInteger)index {
-    return [NSString stringWithXmlChar:xmlTextReaderGetAttributeNo(_reader, index)];
+    xmlChar *xmlStr = xmlTextReaderGetAttributeNo(_reader, index);
+    NSString *result = [NSString stringWithXmlChar:xmlStr];
+    xmlFree(xmlStr);
+    return result;
 }
 
 - (NSString *)attributeWithQName:(NSString *)qName {
-    return [NSString stringWithXmlChar:xmlTextReaderGetAttribute(_reader, [qName xmlChar])];
+    xmlChar *xmlStr = xmlTextReaderGetAttribute(_reader, [qName xmlChar]);
+    NSString *result = [NSString stringWithXmlChar:xmlStr];
+    xmlFree(xmlStr);
+    return result;
 }
 
 - (NSString *)attributeWithQNameC:(const char *)qName {
-    return [NSString stringWithXmlChar:xmlTextReaderGetAttribute(_reader, (xmlChar *)qName)];
+    xmlChar *xmlStr = xmlTextReaderGetAttribute(_reader, (xmlChar *)qName);
+    NSString *result = [NSString stringWithXmlChar:xmlStr];
+    xmlFree(xmlStr);
+    return result;
 }
 
 - (NSString *)attributeWithLocalName:(NSString *)localName namespaceURI:(NSString *)nsURI {
-    return [NSString stringWithXmlChar:xmlTextReaderGetAttributeNs(_reader, [localName xmlChar], [nsURI xmlChar])];
+    xmlChar *xmlStr = xmlTextReaderGetAttributeNs(_reader, [localName xmlChar], [nsURI xmlChar]);
+    NSString *result = [NSString stringWithXmlChar:xmlStr];
+    xmlFree(xmlStr);
+    return result;
 }
 
 - (NSString *)attributeWithLocalNameC:(const char *)localName namespaceURIC:(const char  *)nsURI {
-    return [NSString stringWithXmlChar:xmlTextReaderGetAttributeNs(_reader, (xmlChar *)localName, (xmlChar *)nsURI)];
+    xmlChar *xmlStr = xmlTextReaderGetAttributeNs(_reader, (xmlChar *)localName, (xmlChar *)nsURI);
+    NSString *result = [NSString stringWithXmlChar:xmlStr];
+    xmlFree(xmlStr);
+    return result;
 }
 
 + (BOOL)isName:(NSString *)str {
@@ -270,20 +285,25 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
     return xmlTextReaderReadAttributeValue(_reader);
 }
 
-- (NSString *)readElementString {
-    return [NSString stringWithXmlChar:xmlTextReaderReadString(_reader)];
-}
-
 - (NSString *)readInnerXML {
-    return [NSString stringWithXmlChar:xmlTextReaderReadInnerXml(_reader)];
+    xmlChar *xmlStr = xmlTextReaderReadInnerXml(_reader);
+    NSString *result = [NSString stringWithXmlChar:xmlStr];
+    xmlFree(xmlStr);
+    return result;
 }
 
 - (NSString *)readOuterXML {
-    return [NSString stringWithXmlChar:xmlTextReaderReadOuterXml(_reader)];
+    xmlChar *xmlStr = xmlTextReaderReadOuterXml(_reader);
+    NSString *result = [NSString stringWithXmlChar:xmlStr];
+    xmlFree(xmlStr);
+    return result;
 }
 
 - (NSString *)readString {
-    return [NSString stringWithXmlChar:xmlTextReaderReadString(_reader)];
+    xmlChar *xmlStr = xmlTextReaderReadString(_reader);
+    NSString *result = [NSString stringWithXmlChar:xmlStr];
+    xmlFree(xmlStr);
+    return result;
 }
 
 - (BOOL)skip {
