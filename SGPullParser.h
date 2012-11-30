@@ -32,7 +32,9 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding);
 
 // UTF8 encoding is assumed
 + (id)parserWithData:(NSData *)data;
-- (id)initWithData:(NSData *)data encoding:(NSStringEncoding)encoding;
+
+// UTF8 encoding is assumed
+- (id)initWithData:(NSData *)data;
 
 // Initializes the receiver with the XML contents from the specified stream and parses it..
 // Uses libxml2 callbacks, but is not async. Do networking and parsing on a background thread.

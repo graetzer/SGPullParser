@@ -70,14 +70,14 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
 }
 
 + (id)parserWithData:(NSData *)data {
-    return [[self alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    return [[self alloc] initWithData:data];
 }
 
-- (id)initWithData:(NSData *)data encoding:(NSStringEncoding)encoding {
+- (id)initWithData:(NSData *)data {
     if (self = [super init]) {
         const char* url = NULL;
         _reader = xmlReaderForMemory((const char*)data.bytes, data.length, url,
-                                    IANAEncodingCStringFromNSStringEncoding(encoding), kSGXMLParseOptions);
+                                    IANAEncodingCStringFromNSStringEncoding(NSUTF8StringEncoding), kSGXMLParseOptions);
         if (_reader == NULL) {
             DLog(@"Error opening xml stuff");
             return nil;
