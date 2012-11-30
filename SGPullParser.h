@@ -24,9 +24,20 @@ static const int kSGXMLParseOptions = (XML_PARSE_NOCDATA | XML_PARSE_NOBLANKS);
 const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding);
 
 @interface SGPullParser : NSObject
+
+// Synchrously downloads the data at the URL.
+// If the location is remote you should run this on a background thread
+// UTF8 encoding is assumed
+- (id)initWithContentsOfURL:(NSURL *)url;
+
+// UTF8 encoding is assumed
 + (id)parserWithData:(NSData *)data;
 - (id)initWithData:(NSData *)data encoding:(NSStringEncoding)encoding;
 
+// Initializes the receiver with the XML contents from the specified stream and parses it..
+// Uses libxml2 callbacks, but is not async. Do networking and parsing on a background thread.
+// UTF8 encoding is assumed
+- (id)initWithStream:(NSInputStream *)stream;
 
 // Gets the number of attributes on the current node.
 @property (nonatomic, readonly) NSInteger attributeCount;

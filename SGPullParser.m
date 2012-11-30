@@ -52,7 +52,21 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
 
 @implementation SGPullParser {
     xmlTextReaderPtr _reader;
-    NSStringEncoding _encoding;
+}
+
+- (id)initWithContentsOfURL:(NSURL *)url {
+    if (self = [super init]) {
+        NSData *data = [NSData dataWithContentsOfURL:url];
+        const char* urlChar = [url absoluteString].UTF8String;
+        
+        _reader = xmlReaderForMemory((const char*)data.bytes, data.length, urlChar,
+                                     IANAEncodingCStringFromNSStringEncoding(NSUTF8StringEncoding), kSGXMLParseOptions);
+        if (_reader == NULL) {
+            DLog(@"Error opening xml stuff");
+            return nil;
+        }
+    }
+    return self;
 }
 
 + (id)parserWithData:(NSData *)data {
@@ -61,8 +75,6 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
 
 - (id)initWithData:(NSData *)data encoding:(NSStringEncoding)encoding {
     if (self = [super init]) {
-        _encoding = encoding;
-
         const char* url = NULL;
         _reader = xmlReaderForMemory((const char*)data.bytes, data.length, url,
                                     IANAEncodingCStringFromNSStringEncoding(encoding), kSGXMLParseOptions);
@@ -74,7 +86,34 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
     return self;
 }
 
+static int _sg_inputStreamReadCallback (void * context, char * buffer, int len) {
+    NSInputStream *stream = (__bridge NSInputStream *)context;
+    return [stream read:(uint8_t *)buffer maxLength:len];
+}
+static int _sg_inputStreamCloseCallback	(void * context) {
+    NSInputStream *stream = (__bridge NSInputStream *)context;
+    [stream close];
+    return 0;
+}
+ 
+- (id)initWithStream:(NSInputStream *)stream {
+    if (self = [super init]) {
+        const char* url = NULL;
+        
+        _reader = xmlReaderForIO(_sg_inputStreamReadCallback, _sg_inputStreamCloseCallback,
+                                 (__bridge void *)stream, url, IANAEncodingCStringFromNSStringEncoding(NSUTF8StringEncoding), kSGXMLParseOptions);
+
+        if (_reader == NULL) {
+            DLog(@"Error opening xml stuff");
+            return nil;
+        }
+    }
+    return self;
+}
+
 - (void)dealloc {
+    if (self.readState != XML_TEXTREADER_MODE_CLOSED)
+        [self close];
     xmlFreeTextReader(_reader);
 }
 
@@ -167,7 +206,8 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
 #pragma mark Methods
 
 - (void)close {
-    xmlTextReaderClose(_reader);
+    if (self.readState != XML_TEXTREADER_MODE_CLOSED)
+        xmlTextReaderClose(_reader);
 }
 
 - (NSString *)attributeAtIndex:(NSInteger)index {

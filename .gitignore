@@ -16,3 +16,11 @@ profile
 *.moved-aside
 DerivedData
 .idea/
+
+.svn/dir-prop-base
+
+.svn/text-base/SGPullParser.m.svn-base
+
+*.svn-base
+
+.svn/entries
