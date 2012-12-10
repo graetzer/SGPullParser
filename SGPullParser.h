@@ -183,6 +183,10 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding);
 // Reads the contents of an element or text node as a string.
 - (NSString *)readString;
 
+// Reads the contents of an element or text node as a string.
+// Trims whitespaces and newlines
+- (NSString *)readTrimmedString;
+
 // Skips over the current element and moves the position of the current instance to the next node in the stream.
 - (BOOL)skip;
 

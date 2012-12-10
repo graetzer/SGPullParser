@@ -346,6 +346,10 @@ static int _sg_inputStreamCloseCallback	(void * context) {
     return result;
 }
 
+- (NSString *)readTrimmedString {
+    return [[self readString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+}
+
 - (BOOL)skip {
     return xmlTextReaderNextSibling(_reader);//xmlTextReaderNext
 }
