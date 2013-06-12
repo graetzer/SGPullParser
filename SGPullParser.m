@@ -62,7 +62,7 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
         _reader = xmlReaderForMemory((const char*)data.bytes, data.length, urlChar,
                                      IANAEncodingCStringFromNSStringEncoding(NSUTF8StringEncoding), kSGXMLParseOptions);
         if (_reader == NULL) {
-            DLog(@"Error opening xml stuff");
+            NSLog(@"Error opening xml file");
             return nil;
         }
     }
