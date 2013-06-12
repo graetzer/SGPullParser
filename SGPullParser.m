@@ -104,7 +104,7 @@ static int _sg_inputStreamCloseCallback	(void * context) {
                                  (__bridge void *)stream, url, IANAEncodingCStringFromNSStringEncoding(NSUTF8StringEncoding), kSGXMLParseOptions);
 
         if (_reader == NULL) {
-            DLog(@"Error opening xml stuff");
+            NSLog(@"Error opening xml file");
             return nil;
         }
     }
