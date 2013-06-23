@@ -38,7 +38,7 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding);
 
 // Initializes the receiver with the XML contents from the specified stream and parses it..
 // Uses libxml2 callbacks, but is not async. Do networking and parsing on a background thread.
-// UTF8 encoding is assumed
+// UTF8 encoding is assumed, the stream should be open, the parser will close it.
 - (id)initWithStream:(NSInputStream *)stream;
 
 // Gets the number of attributes on the current node.
@@ -87,7 +87,7 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding);
 @property (nonatomic, readonly, copy) NSString *prefix;
 
 // Gets the quotation mark character used to enclose the value of an attribute.
-@property (nonatomic, readonly) char quoteChar;
+@property (nonatomic, readonly) int quoteChar;
 
 // Gets the read state of the reader.
 @property (nonatomic, readonly) xmlTextReaderMode readState;

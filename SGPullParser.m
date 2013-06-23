@@ -55,12 +55,21 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
 }
 
 - (id)initWithContentsOfURL:(NSURL *)url {
+    NSParameterAssert(url != nil);
+    
     if (self = [super init]) {
-        NSData *data = [NSData dataWithContentsOfURL:url];
-        const char* urlChar = [url absoluteString].UTF8String;
-        
-        _reader = xmlReaderForMemory((const char*)data.bytes, data.length, urlChar,
-                                     IANAEncodingCStringFromNSStringEncoding(NSUTF8StringEncoding), kSGXMLParseOptions);
+        if ([url isFileURL]) {
+            const char *filename = [url.path UTF8String];
+            _reader = xmlReaderForFile(filename, IANAEncodingCStringFromNSStringEncoding(NSUTF8StringEncoding), kSGXMLParseOptions);
+        } else {
+            const char *filename = [url.absoluteString UTF8String];
+            _reader = xmlReaderForFile(filename, IANAEncodingCStringFromNSStringEncoding(NSUTF8StringEncoding), kSGXMLParseOptions);
+        }
+//        NSData *data = [NSData dataWithContentsOfURL:url];
+//        const char* urlChar = [url absoluteString].UTF8String;
+//        
+//        _reader = xmlReaderForMemory((const char*)data.bytes, data.length, urlChar,
+//                                     IANAEncodingCStringFromNSStringEncoding(NSUTF8StringEncoding), kSGXMLParseOptions);
         if (_reader == NULL) {
             NSLog(@"Error opening xml file");
             return nil;
@@ -74,6 +83,8 @@ const char *IANAEncodingCStringFromNSStringEncoding(NSStringEncoding encoding)
 }
 
 - (id)initWithData:(NSData *)data {
+    NSParameterAssert(data != nil);
+    
     if (self = [super init]) {
         const char* url = NULL;
         _reader = xmlReaderForMemory((const char*)data.bytes, data.length, url,
@@ -97,6 +108,8 @@ static int _sg_inputStreamCloseCallback	(void * context) {
 }
  
 - (id)initWithStream:(NSInputStream *)stream {
+    NSParameterAssert(stream != nil);
+    
     if (self = [super init]) {
         const char* url = NULL;
         
@@ -126,7 +139,10 @@ static int _sg_inputStreamCloseCallback	(void * context) {
 
 
 - (NSString *)baseURI {
-    return [NSString stringWithXmlChar:xmlTextReaderBaseUri(_reader)];
+    xmlChar * xmlStr = xmlTextReaderBaseUri(_reader);
+    NSString *result = [NSString stringWithXmlChar:xmlStr];
+    xmlFree(xmlStr);
+    return result;
 }
 
 
@@ -186,7 +202,7 @@ static int _sg_inputStreamCloseCallback	(void * context) {
     return [NSString stringWithConstXmlChar:xmlTextReaderConstPrefix(_reader)];
 }
 
-- (char)quoteChar {
+- (int)quoteChar {
     return xmlTextReaderQuoteChar(_reader);
 }
 
@@ -254,11 +270,17 @@ static int _sg_inputStreamCloseCallback	(void * context) {
 }
 
 - (NSString *)lookupNamespace:(NSString *)prefix {
-    return [NSString stringWithXmlChar:xmlTextReaderLookupNamespace(_reader, [prefix xmlChar])];
+    xmlChar *xmlStr = xmlTextReaderLookupNamespace(_reader, [prefix xmlChar]);
+    NSString *result = [NSString stringWithXmlChar:xmlStr];
+    xmlFree(xmlStr);
+    return result;
 }
 
 - (NSString *)lookupNamespaceC:(const char *)prefix {
-    return [NSString stringWithXmlChar:xmlTextReaderLookupNamespace(_reader, (xmlChar *)prefix)];
+    xmlChar *xmlStr = xmlTextReaderLookupNamespace(_reader, (xmlChar *)prefix);
+    NSString *result = [NSString stringWithXmlChar:xmlStr];
+    xmlFree(xmlStr);
+    return result;
 }
 
 - (void)moveToAttributeAtIndex:(NSInteger)index {
